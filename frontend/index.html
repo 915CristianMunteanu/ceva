@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical Record Management</title>
+</head>
+<body>
+<h1>Medical Record Management</h1>
+
+<h2>Add Patient</h2>
+<form id="addPatientForm">
+  <label for="patientName">Name:</label>
+  <input type="text" id="patientName" name="patientName" required>
+  <label for="patientDOB">Date of Birth:</label>
+  <input type="text" id="patientDOB" name="patientDOB" required>
+  <button type="submit">Add Patient</button>
+</form>
+
+<h2>Update Patient</h2>
+<form id="updatePatientForm">
+  <label for="updatePatientId">Patient ID:</label>
+  <input type="number" id="updatePatientId" name="updatePatientId" required>
+  <label for="newPatientName">New Name:</label>
+  <input type="text" id="newPatientName" name="newPatientName" required>
+  <label for="newPatientDOB">New Date of Birth:</label>
+  <input type="text" id="newPatientDOB" name="newPatientDOB" required>
+  <button type="submit">Update Patient</button>
+</form>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.5.2/web3.min.js"></script>
+<script>
+        const controllerAddress = '0x9C091EE05Cc09502e150716DeFFB7cCFe0c8d427';
+
+        const controllerABI = [
+    {
+      "inputs": [
+        {
+          "internalType": "contract Repository",
+          "name": "_repository",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "patientId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        }
+      ],
+      "name": "MedicalRecordCreated",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "repository",
+      "outputs": [
+        {
+          "internalType": "contract Repository",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "dateOfBirth",
+          "type": "string"
+        }
+      ],
+      "name": "addPatient",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "patientId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "newName",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "newDateOfBirth",
+          "type": "string"
+        }
+      ],
+      "name": "updatePatient",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "patientId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "dateOfVisit",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "diagnosis",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "treatment",
+          "type": "string"
+        }
+      ],
+      "name": "addMedicalRecord",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "patientId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "medicalRecordId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "newDateOfVisit",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "newDiagnosis",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "newTreatment",
+          "type": "string"
+        }
+      ],
+      "name": "updateMedicalRecord",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+        ];
+
+
+        const web3 = new Web3(window.ethereum);
+
+        const controllerContract = new web3.eth.Contract(controllerABI, controllerAddress);
+
+        document.getElementById('addPatientForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const patientName = document.getElementById('patientName').value;
+            const patientDOB = document.getElementById('patientDOB').value;
+            try {
+                await controllerContract.methods.addPatient(patientName, patientDOB).send({ from: ethereum.selectedAddress });
+                alert('Patient added successfully!');
+            } catch (error) {
+                alert('Failed to add patient: ' + error.message);
+            }
+        });
+
+        document.getElementById('updatePatientForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const patientId = parseInt(document.getElementById('updatePatientId').value);
+            const newPatientName = document.getElementById('newPatientName').value;
+            const newPatientDOB = document.getElementById('newPatientDOB').value;
+            try {
+                await controllerContract.methods.updatePatient(patientId, newPatientName, newPatientDOB).send({ from: ethereum.selectedAddress });
+                alert('Patient updated successfully!');
+            } catch (error) {
+                alert('Failed to update patient: ' + error.message);
+            }
+        });
+    </script>
+
+</html>

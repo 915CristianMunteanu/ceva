@@ -46,14 +46,6 @@ contract Repository {
         emit MedicalRecordUpdated(patientId, medicalRecordId, newDateOfVisit, newDiagnosis, newTreatment);
     }
 
-    function getAllPatients() public view returns (address[] memory) {
-        address[] memory allPatients = new address[](nextPatientId);
-        for (uint i = 0; i < nextPatientId - 1; i++) {
-            allPatients[i] = patients[i];
-        }
-        return allPatients;
-    }
-
     function getPatient(uint patientId) public view returns (address) {
         require(patientId < nextPatientId, "Patient does not exist!");
         return patients[patientId];
